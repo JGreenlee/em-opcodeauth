@@ -1,18 +1,17 @@
-package edu.berkeley.eecs.emission.cordova.opcodeauth;
+package edu.berkeley.eecs.emission.opcodeauth;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 
-import edu.berkeley.eecs.emission.cordova.connectionsettings.ConnectionSettings;
-import edu.berkeley.eecs.emission.cordova.unifiedlogger.Log;
-import edu.berkeley.eecs.emission.cordova.usercache.UserCacheFactory;
+import edu.berkeley.eecs.emission.connectionsettings.ConnectionSettings;
+import edu.berkeley.eecs.emission.unifiedlogger.Log;
+import edu.berkeley.eecs.emission.usercache.UserCacheFactory;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
-import org.apache.cordova.CordovaPlugin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,7 +23,6 @@ import org.json.JSONObject;
  */
 
 class PromptedAuth implements AuthTokenCreator {
-    private CordovaPlugin mPlugin;
     private AuthPendingResult mAuthPending;
     private Context mCtxt;
 

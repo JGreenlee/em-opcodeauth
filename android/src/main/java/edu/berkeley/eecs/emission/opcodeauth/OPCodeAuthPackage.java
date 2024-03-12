@@ -1,56 +1,84 @@
-package edu.berkeley.eecs.emission.cordova.opcodeauth;
+package edu.berkeley.eecs.emission.opcodeauth;
 
-import org.apache.cordova.*;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
+import android.content.Context;
 import androidx.annotation.NonNull;
-import android.widget.Toast;
-
 import com.google.android.gms.common.api.ResultCallback;
 
-import edu.berkeley.eecs.emission.cordova.unifiedlogger.Log;
+import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.uimanager.ViewManager;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.module.annotations.ReactModule;
 
-public class OPCodePlugin extends CordovaPlugin {
-    private static String TAG = "OPCodePlugin";
-    private AuthTokenCreator tokenCreator;
-    private static final int RESOLVE_ERROR_CODE = 2000;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    @Override
-    public boolean execute(String action, JSONArray data, final CallbackContext callbackContext) throws JSONException {
-        tokenCreator = AuthTokenCreationFactory.getInstance(cordova.getActivity());
-        if (action.equals("getOPCode")) {
-            Activity ctxt = cordova.getActivity();
-            AuthPendingResult result = tokenCreator.getOPCode();
-            result.setResultCallback(new ResultCallback<AuthResult>() {
-                @Override
-                public void onResult(@NonNull AuthResult authResult) {
-                    if (authResult.getStatus().isSuccess()) {
-                        callbackContext.success(authResult.getOPCode());
-                    } else {
-                        callbackContext.error(authResult.getStatus().getStatusCode() + " : "+
-                                authResult.getStatus().getStatusMessage());
-                    }
-                }
-            });
-            return true;
-        } else if (action.equals("setOPCode")) {
-            String opcode = data.getString(0);
-            Log.d(cordova.getActivity(),TAG,
-                    "Force setting the prompted auth token = "+opcode);
-            try {
-                tokenCreator.setOPCode(opcode);
-                callbackContext.success(opcode);
-                return true;
-            } catch (JSONException e) {
-                callbackContext.error("JSONException while saving token "+opcode);
-                return false;
-            }
-        } else {
-            return false;
+@ReactModule(name = OPCodeAuthModule.TAG)
+class OPCodeAuthModule extends ReactContextBaseJavaModule {
+  public static final String TAG = "OPCodeAuth";
+
+  private Context ctxt;
+
+  public OPCodeAuthModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+    this.ctxt = reactContext.getApplicationContext();
+  }
+
+  @Override
+  @NonNull
+  public String getName() {
+    return TAG;
+  }
+
+  @ReactMethod
+  public void getOPCode(Promise promise) {
+    try {
+      AuthTokenCreator tokenCreator = AuthTokenCreationFactory.getInstance(ctxt);
+      AuthPendingResult result = tokenCreator.getOPCode();
+      result.setResultCallback(new ResultCallback<AuthResult>() {
+        @Override
+        public void onResult(@NonNull AuthResult authResult) {
+          if (authResult.getStatus().isSuccess()) {
+            promise.resolve(authResult.getOPCode());
+          } else {
+            promise.reject(authResult.getStatus().getStatusCode() + " : "
+                + authResult.getStatus().getStatusMessage());
+          }
         }
+      });
+    } catch (Exception e) {
+      promise.reject(e);
     }
+  }
+
+  @ReactMethod
+  public void setOPCode(String opcode, Promise promise) {
+    try {
+      AuthTokenCreator tokenCreator = AuthTokenCreationFactory.getInstance(ctxt);
+      tokenCreator.setOPCode(opcode);
+      promise.resolve(opcode);
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+  }
+}
+
+public class OPCodeAuthPackage implements ReactPackage {
+  @NonNull
+  @Override
+  public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
+    List<NativeModule> modules = new ArrayList<>();
+    modules.add(new OPCodeAuthModule(reactContext));
+    return modules;
+  }
+
+  @NonNull
+  @Override
+  public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
+    return Collections.emptyList();
+  }
 }

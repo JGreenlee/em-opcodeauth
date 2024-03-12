@@ -1,8 +1,6 @@
-package edu.berkeley.eecs.emission.cordova.opcodeauth;
+package edu.berkeley.eecs.emission.opcodeauth;
 
 import android.content.Context;
-
-import edu.berkeley.eecs.emission.cordova.connectionsettings.ConnectionSettings;
 
 /**
  * Created by shankari on 8/19/17.

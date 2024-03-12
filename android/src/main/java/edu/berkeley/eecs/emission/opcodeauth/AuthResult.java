@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.emission.cordova.opcodeauth;
+package edu.berkeley.eecs.emission.opcodeauth;
 
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.Status;

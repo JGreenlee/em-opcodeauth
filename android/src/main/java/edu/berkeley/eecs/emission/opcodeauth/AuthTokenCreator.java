@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.emission.cordova.opcodeauth;
+package edu.berkeley.eecs.emission.opcodeauth;
 
 import android.content.Intent;
 import android.content.Context;

@@ -1,28 +1,19 @@
-/*global cordova, module*/
+import { NativeModules } from 'react-native';
 
-var exec = require("cordova/exec")
+const moduleName = 'OPCodeAuth';
 
-var OPCodeAuth = {
-    /*
-     * Returns the stored OPCode (aka token)
-     * Can return null if the user is not signed in.
-     */
-    getOPCode: function () {
-        return new Promise(function(resolve, reject) {
-             exec(resolve, reject, "OPCodeAuth", "getOPCode", []);
-        });
-    },
+const module = NativeModules[moduleName]
+  ? NativeModules[moduleName]
+  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(`Native module ${moduleName} is not linked.`);
+        },
+      },
+    );
 
-    /*
-     * Corresponding "set" method since we generate the OPCode (aka token) in
-     * the phone app and just pass it here for storage.
-     */
-
-    setOPCode(opcode) {
-        return new Promise(function(resolve, reject) {
-            exec(resolve, reject, "OPCodeAuth", "setOPCode", [opcode]);
-        });
-    },
-}
-
-module.exports = OPCodeAuth;
+export default {
+  getOPCode: (): Promise<string> => module.getOPCode(),
+  setOPCode: (opcode: string): Promise<void> => module.setOPCode(opcode),
+};

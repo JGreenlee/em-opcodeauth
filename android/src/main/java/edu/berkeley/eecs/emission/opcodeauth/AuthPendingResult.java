@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.emission.cordova.opcodeauth;
+package edu.berkeley.eecs.emission.opcodeauth;
 
 import android.os.AsyncTask;
 import androidx.annotation.NonNull;
@@ -10,7 +10,6 @@ import com.google.android.gms.common.api.Status;
 
 import java.util.concurrent.TimeUnit;
 
-import edu.berkeley.eecs.emission.BuildConfig;
 import android.util.Log;
 
 public class AuthPendingResult extends PendingResult<AuthResult> {
